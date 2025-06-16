@@ -8,7 +8,7 @@ use std::fmt::Debug;
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("netlink error: {0}")]
-    Netlink(String),
+    Netlink(#[from] neli::err::SocketError),
 
     #[error(transparent)]
     IO(#[from] std::io::Error),
@@ -18,10 +18,4 @@ pub enum Error {
 
     #[error(transparent)]
     Serialization(#[from] neli::err::SerError),
-}
-
-impl<T: Debug, P: Debug> From<neli::err::NlError<T, P>> for Error {
-    fn from(value: neli::err::NlError<T, P>) -> Self {
-        Self::Netlink(format!("{:?}", value))
-    }
 }
