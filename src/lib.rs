@@ -54,6 +54,7 @@ pub use crate::connection::*;
 pub use crate::error::*;
 pub use crate::result::*;
 
+pub mod asynchronous;
 pub mod attributes;
 pub mod decoders;
 pub mod message;
