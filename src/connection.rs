@@ -50,19 +50,25 @@ impl Conntrack {
 
         self.socket.send(&msg)?;
 
-        let (msgs, _) = self
-            .socket
-            .recv::<CtNetlinkMessage, Genlmsghdr<u8, ConntrackAttr>>()?;
+        let mut result = Vec::new();
 
-        msgs.filter_map(|res| {
-            let msg = res.ok()?;
-            if let Some(message) = msg.get_payload() {
-                let handle = message.attrs().get_attr_handle();
-                Some(Flow::decode(handle))
-            } else {
-                None
+        'outer: loop {
+            let (msgs, _) = self
+                .socket
+                .recv::<CtNetlinkMessage, Genlmsghdr<u8, ConntrackAttr>>()?;
+
+            for msg in msgs {
+                if let Some(message) = msg?.get_payload() {
+                    let handle = message.attrs().get_attr_handle();
+                    if let Ok(flow) = Flow::decode(handle) {
+                        result.push(flow);
+                    }
+                } else {
+                    break 'outer;
+                }
             }
-        })
-        .collect()
+        }
+
+        Ok(result)
     }
 }
