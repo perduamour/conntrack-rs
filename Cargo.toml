@@ -14,7 +14,7 @@ edition = "2021"
 thiserror = "2.0.11"
 chrono = { version = "0.4.38", features = ["serde"] }
 libc = "0.2.155"
-neli = { version = "0.7.0-rc3", features = ["async"] }
+neli = { version = "0.7.0", features = ["async"] }
 bitflags = "2.5.0"
 log = "0.4.21"
 serde = { version = "1.0.202", features = ["derive"] }
